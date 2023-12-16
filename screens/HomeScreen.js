@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StatusBar, ImageBackground, StyleSheet, Image, ScrollView } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const data = [
     {
@@ -20,42 +21,7 @@ const data = [
         itemName: 'Oranges',
         expiryDays: 4,
       },
-      {
-        id: 1,
-        imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
-        itemName: 'Capsicum',
-        expiryDays: 2,
-      },
-      {
-          id: 2,
-          imageUri: 'https://www.southernliving.com/thmb/zCKBQZG85v0gxUpn5Nm_8elGJaA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1413944242-79c406e0bbe4435596bc671f95a949cb.jpg',
-          itemName: 'Milk',
-          expiryDays: 1,
-        },
-        {
-          id: 3,
-          imageUri: 'https://www.allrecipes.com/thmb/y_uvjwXWAuD6T0RxaS19jFvZyFU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1205638014-2000-d0fbf9170f2d43eeb046f56eec65319c.jpg',
-          itemName: 'Oranges',
-          expiryDays: 4,
-        },
-        {
-            id: 1,
-            imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
-            itemName: 'Capsicum',
-            expiryDays: 2,
-          },
-          {
-              id: 2,
-              imageUri: 'https://www.southernliving.com/thmb/zCKBQZG85v0gxUpn5Nm_8elGJaA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1413944242-79c406e0bbe4435596bc671f95a949cb.jpg',
-              itemName: 'Milk',
-              expiryDays: 1,
-            },
-            {
-              id: 3,
-              imageUri: 'https://www.allrecipes.com/thmb/y_uvjwXWAuD6T0RxaS19jFvZyFU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1205638014-2000-d0fbf9170f2d43eeb046f56eec65319c.jpg',
-              itemName: 'Oranges',
-              expiryDays: 4,
-            },
+      
       
     // Add more data objects as needed
   ];
@@ -72,8 +38,13 @@ const HomeScreen = () => {
             <Text style={styles.greetings}>Hello Vinita!</Text>
         </View>
         <View style={styles.dataBox}>
-            <Text>Inside Fridge</Text>
-            <Text style={styles.dataBoxEmoji}>😁🤢</Text>
+        <View style={styles.dataBoxHeader}>
+            <Text style={styles.dataBoxHeaderText}>Inside fridge</Text>
+          </View>
+            <View style={styles.dataBoxEmojiContainer}>
+              <View style={styles.dataBoxEmoji}><Text style={styles.dataBoxEmojiContainerText}><MaterialCommunityIcons name="thermometer" size={50} /></Text></View>
+              <View style={styles.dataBoxEmoji}><Text style={styles.dataBoxEmojiContainerText}>🤢</Text></View>
+            </View>
         </View>
         <View style={styles.dataBox}>
           <View style={styles.dataBoxHeader}>
@@ -163,6 +134,18 @@ const styles = StyleSheet.create({
     
   },
   dataBoxEmoji:{
+    width: '50%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dataBoxEmojiContainer:{
+    flex: 1,
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    padding: 10,
+  },
+  dataBoxEmojiContainerText:{
     fontSize: 50,
   }
 });
