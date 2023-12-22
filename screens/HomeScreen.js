@@ -2,12 +2,19 @@ import React from 'react';
 import { View, Text, StatusBar, ImageBackground, StyleSheet, Image, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+const inventoryData = {
+  "0": "123456",
+  "1": "345678",
+  // ... more barcode values
+};
+
 const data = [
     {
       id: 1,
       imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
       itemName: 'Capsicum',
       expiryDays: 2,
+      barcode: "123456",
     },
     {
         id: 2,
@@ -26,6 +33,11 @@ const data = [
     // Add more data objects as needed
   ];
 
+
+  const matchingItems = Object.values(inventoryData)
+  .map(barcode => data.find(item => item.barcode === barcode))
+  .filter(Boolean);
+
 const HomeScreen = () => {
   return (
     <View style={styles.container}>
@@ -33,17 +45,24 @@ const HomeScreen = () => {
       <ImageBackground
         source={require('../assets/home.avif')} // Replace with the actual path to your image
         style={styles.backgroundImage}
+        blurRadius={3}
       >
         <View style={styles.greetingBox}>
-            <Text style={styles.greetings}>Hello Vinita!</Text>
+            <Text style={styles.greetings}>Smart Fridge</Text>
+            <Text style={styles.greetingsName}>Welcome Vinita!</Text>
         </View>
         <View style={styles.dataBox}>
         <View style={styles.dataBoxHeader}>
             <Text style={styles.dataBoxHeaderText}>Inside fridge</Text>
           </View>
             <View style={styles.dataBoxEmojiContainer}>
-              <View style={styles.dataBoxEmoji}><Text style={styles.dataBoxEmojiContainerText}><MaterialCommunityIcons name="thermometer" size={50} /></Text></View>
-              <View style={styles.dataBoxEmoji}><Text style={styles.dataBoxEmojiContainerText}>🤢</Text></View>
+              <View style={styles.dataBoxEmoji}>
+                <Text style={styles.dataBoxEmojiContainerText}><MaterialCommunityIcons name="thermometer" size={56} color="lightblue"/></Text>
+                <Text>2°C - Optimal and Stable</Text>
+              </View>
+              <View style={styles.dataBoxEmoji}><Text style={styles.dataBoxEmojiContainerText}>🤢</Text>
+              <Text>Poor</Text>
+              </View>
             </View>
         </View>
         <View style={styles.dataBox}>
@@ -51,7 +70,7 @@ const HomeScreen = () => {
             <Text style={styles.dataBoxHeaderText}>Shopping lists</Text>
           </View>
           {/* Dynamic Table Content */}
-          {data.map(item => (
+          {matchingItems.map(item => (
             <View key={item.id} style={styles.tableRow}>
               <Image source={{ uri: item.imageUri }} style={styles.image} />
               <View style={styles.details}>
@@ -78,7 +97,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     resizeMode: 'cover', // or 'stretch' or 'contain'
-    minHeight: "100%"
+    minHeight: "100%",
   },
   dataBox: {
     margin: 10,
@@ -88,13 +107,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   greetingBox: {
-    fontSize: 40,
     padding: 10,
     height: 300,
   },
   greetings: {
+    fontSize: 25,
+    paddingTop: 60,
+    color: '#FFFFFF',
+  },
+  greetingsName:{
     fontSize: 40,
     paddingTop: 60,
+    color: '#FFFFFF',
   },
   dataBoxHeader: {
     borderBottomWidth: 1,  // Add a border only at the bottom
@@ -143,6 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-around',
     flexDirection: 'row',
+    height: 80,
     padding: 10,
   },
   dataBoxEmojiContainerText:{

@@ -5,6 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Inventory from './screens/Inventory';
+import Shopping from './screens/Shopping';
 
 
 const Tab = createBottomTabNavigator();
@@ -24,21 +26,19 @@ export default function App() {
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
         }} component={HomeScreen} />
-       <Tab.Screen name="Inventory" component={HomeScreen} options={{
+       <Tab.Screen name="View Inside" component={Inventory} options={{
           tabBarLabel: 'Inventory',
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="receipt" color={color} size={size} />
           ),
         }} />
        <Tab.Screen name="Shopping list" options={{
           tabBarLabel: 'Shopping list',
-          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="shopping" color={color} size={size} />
           ),
           tabBarBadge: 3,
-        }} component={HomeScreen} />
+        }} component={Shopping} />
     </Tab.Navigator>
     </NavigationContainer>
   );
