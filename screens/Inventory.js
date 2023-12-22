@@ -1,29 +1,35 @@
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
-
-const data = [
-    {
-      id: 1,
-      imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
-      itemName: 'Capsicum',
-      expiryDays: 2,
-    },
-    {
-        id: 2,
-        imageUri: 'https://www.southernliving.com/thmb/zCKBQZG85v0gxUpn5Nm_8elGJaA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1413944242-79c406e0bbe4435596bc671f95a949cb.jpg',
-        itemName: 'Milk',
-        expiryDays: 1,
-    },
-    {
-    id: 3,
-    imageUri: 'https://www.allrecipes.com/thmb/y_uvjwXWAuD6T0RxaS19jFvZyFU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1205638014-2000-d0fbf9170f2d43eeb046f56eec65319c.jpg',
-    itemName: 'Oranges',
-    expiryDays: 4,
-    },
-    
-    // Add more data objects as needed
-  ];
+import { inventory } from '../assets/inventory';
 
 const Inventory = () => {
+
+  // const [inventoryData, setInventoryData] = useState({});
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch('http://192.168.169.1/scan_state.json');
+  //       const data = await response.json();
+  //       setInventoryData(data);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  const inventoryData = {
+    "0": "123456",
+    "1": "345678",
+    "2": "12345",
+    // ... more barcode values
+  };
+
+  const matchingItems = Object.values(inventoryData)
+  .map(barcode => inventory.find(item => item.barcode === barcode))
+  .filter(Boolean);
+
   return (
     <View style={styles.container}>
       <ScrollView><View style={styles.dataBox}>
@@ -31,7 +37,7 @@ const Inventory = () => {
             <Text style={styles.dataBoxHeaderText}>Inventory</Text>
           </View>
           {/* Dynamic Table Content */}
-          {data.map(item => (
+          {matchingItems.map(item => (
             <View key={item.id} style={styles.tableRow}>
               <Image source={{ uri: item.imageUri }} style={styles.image} />
               <View style={styles.details}>
@@ -48,7 +54,7 @@ const Inventory = () => {
             <Text style={styles.dataBoxHeaderText}>Pantry</Text>
           </View>
           {/* Dynamic Table Content */}
-          {data.map(item => (
+          {matchingItems.map(item => (
             <View key={item.id} style={styles.tableRow}>
               <Image source={{ uri: item.imageUri }} style={styles.image} />
               <View style={styles.details}>
