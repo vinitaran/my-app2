@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StatusBar, ImageBackground, StyleSheet, Image, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { inventory } from '../assets/inventory';
+import { database } from '../assets/inventory';
 
 const inventoryData = {
   "0": "123456",
   "1": "345678",
-  "2": "123456",
+  "2": "345677",
   // ... more barcode values
 };
   
@@ -34,7 +34,7 @@ const HomeScreen = () => {
   // .filter(Boolean);
 
   const matchingItems = Object.values(inventoryData)
-  .map(barcode => inventory.find(item => item.barcode === barcode))
+  .map(barcode => database.find(item => item.barcode === barcode))
   .filter(item => item && item.expiryDays <= 2);
 
   return (
@@ -65,7 +65,7 @@ const HomeScreen = () => {
         </View>
         <View style={styles.dataBox}>
           <View style={styles.dataBoxHeader}>
-            <Text style={styles.dataBoxHeaderText}>Shopping lists</Text>
+            <Text style={styles.dataBoxHeaderText}>Items about to expire</Text>
           </View>
           {/* Dynamic Table Content */}
           {matchingItems.map(item => (
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   detailsCaption:{
-    color: 'gray',
+    color: 'red',
     fontSize: 12,
     
   },
