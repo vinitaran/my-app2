@@ -14,6 +14,9 @@ import {
 import { FontAwesome } from '@expo/vector-icons';
 import { Picker, PickerIOS } from '@react-native-picker/picker';
 import { database } from '../assets/inventory';
+import { emitter } from './EventEmitter';
+
+
 
 const Inventory = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -21,12 +24,44 @@ const Inventory = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [inventory, setInventory] = useState();
   const [matchedItems, setMatchedItems] = useState();
+  const [expiryDays, setExpiryDays] = useState('');
+
+
+
+const storeData = async (data) => {
+  try {
+    const jsonValue = JSON.stringify(data);
+    await AsyncStorage.setItem('@inventory_key', jsonValue);
+    emitter.emit('inventoryUpdated');
+  } catch (e) {
+    // handle save error
+  }
+}
+
+const retrieveData = async () => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('@inventory_key');
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    // handle read error
+  }
+}
+
+const deleteItem = async (id) => {
+  const updatedInventory = inventory.filter(item => item.id !== id);
+  setInventory(updatedInventory);
+  await AsyncStorage.setItem('inventory', JSON.stringify(updatedInventory));
+  // After deleting an item and updating AsyncStorage
+  emitter.emit('inventoryUpdated');
+};
+
+
+
 
 
   const inventoryData = {
     "0": "345678",
     "1": "123456",
-    "2":"345677",
     // ... more barcode values
   };
 
@@ -37,37 +72,47 @@ const Inventory = () => {
       .filter(Boolean);
     console.log(matchingItems);
     setInventory([...matchingItems]);
-    
+    storeData(matchingItems);
   }, []);
   
 
+
   useEffect(() => {
     const loadInventory = async () => {
-      console.log(inve);
+      const storedInventory = await retrieveData();
+      if (storedInventory) {
+        setInventory(storedInventory);
+      }
     };
     loadInventory();
   }, []);
+  
   
 
   const saveInventory = async (newInventory) => {
     try {
       await AsyncStorage.setItem('inventory', JSON.stringify(newInventory));
-      setInventory(newInventory);
+      setInventory(newInventory); // Update the state with the new inventory
     } catch (error) {
       console.error('Failed to save inventory', error);
     }
   };
+  
 
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
     setSelectedCategory(null);
     setItemName('');
+    setExpiryDays('');
   }
 
   const handleNameChange = (text) => setItemName(text);
 
   const handleCategoryChange = (value) => setSelectedCategory(value);
+
+  const handleExpiryDaysChange = (text) => setExpiryDays(text);
+
 
   const clearAsyncStorage = async () => {
     try {
@@ -90,15 +135,14 @@ const Inventory = () => {
       id: inventory.length + 1, // Assigning a new ID
       imageUri: defaultImageUri,
       itemName: itemName,
-      expiryDays: defaultExpiryDays,
+      expiryDays: expiryDays ? parseInt(expiryDays, 10) : defaultExpiryDays, // Convert to number
       barcode: defaultBarcode,
       // ... any other default properties
     };
 
     if (itemName && selectedCategory) {
       const newInventory = [...inventory, newItem];
-      saveInventory(newInventory);
-      console.log(inventory);
+      saveInventory(newInventory); // Save the updated inventory
       toggleModal();
     } else {
       // Handle the case when itemName or selectedCategory is not provided
@@ -141,6 +185,16 @@ const Inventory = () => {
         {/* Add more categories as needed */}
       </Picker>
 
+      <Text style={styles.inputLabel}>Expires In (days)</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Enter number of days"
+  value={expiryDays}
+  onChangeText={handleExpiryDaysChange}
+  keyboardType="numeric" // Ensures only numbers are entered
+/>
+
+
       {/* Submit Button */}
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit</Text>
@@ -179,6 +233,9 @@ const Inventory = () => {
                 {`Expires in ${item.expiryDays} day${item.expiryDays !== 1 ? 's' : ''}`}
               </Text>
             </View>
+            <TouchableOpacity onPress={() => deleteItem(item.id)} style={styles.deleteButton}>
+              <Text style={styles.deleteButtonText}>Delete</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </View>
@@ -335,6 +392,23 @@ inputLabel: {
   marginBottom: 5,
   color: '#333',
 },
+
+tableRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  margin: 10,
+},
+deleteButton: {
+  padding: 10,
+  backgroundColor: 'red',
+  borderRadius: 5,
+  // ... other styling for the button ...
+},
+deleteButtonText: {
+  color: 'white',
+  // ... other styling for the button text ...
+}
 
 });
 

@@ -2,18 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StatusBar, ImageBackground, StyleSheet, Image, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { database } from '../assets/inventory';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { emitter } from './EventEmitter';
 
-const inventoryData = {
-  "0": "123456",
-  "1": "345678",
-  "2": "345677",
-  // ... more barcode values
-};
   
 
 const HomeScreen = () => {
 
-  // const [inventoryData, setInventoryData] = useState({});
+  const [inventoryData, setInventoryData] = useState([]);
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -32,9 +28,39 @@ const HomeScreen = () => {
   // const matchingItems = Object.values(inventoryData)
   // .map(barcode => inventory.find(item => item.barcode === barcode))
   // .filter(Boolean);
+  
 
-  const matchingItems = Object.values(inventoryData)
-  .map(barcode => database.find(item => item.barcode === barcode))
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('inventory');
+        const inventoryData = jsonValue != null ? JSON.parse(jsonValue) : [];
+        setInventoryData(inventoryData); // Uncomment and use this line if needed
+      } catch (e) {
+        console.error('Error fetching data from AsyncStorage:', e);
+      }
+    };
+  
+    fetchInventory();
+
+  // Listener for inventory update events
+  const handleInventoryUpdate = () => {
+    fetchInventory(); // Re-fetch inventory data when an update event occurs
+  };
+
+  emitter.on('inventoryUpdated', handleInventoryUpdate);
+
+  // Cleanup the listener when the component unmounts
+  return () => {
+    emitter.off('inventoryUpdated', handleInventoryUpdate);
+  };
+  }, []);
+
+  // const matchingItems = Object.values(inventoryData)
+  // .map(barcode => database.find(item => item.barcode === barcode))
+  // .filter(item => item && item.expiryDays <= 2);
+
+  const matchingItems = inventoryData
   .filter(item => item && item.expiryDays <= 2);
 
   return (
