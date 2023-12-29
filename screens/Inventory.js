@@ -28,15 +28,7 @@ const Inventory = () => {
 
 
 
-const storeData = async (data) => {
-  try {
-    const jsonValue = JSON.stringify(data);
-    await AsyncStorage.setItem('@inventory_key', jsonValue);
-    emitter.emit('inventoryUpdated');
-  } catch (e) {
-    // handle save error
-  }
-}
+
 
 const retrieveData = async () => {
   try {
@@ -59,21 +51,21 @@ const deleteItem = async (id) => {
 
 
 
-  const inventoryData = {
-    "0": "345678",
-    "1": "123456",
-    // ... more barcode values
-  };
+  // const inventoryData = {
+  //   "0": "345678",
+  //   "1": "123456",
+  //   // ... more barcode values
+  // };
 
-  // Map barcode values to corresponding inventory items
-  useEffect(() => {
-    const matchingItems = Object.values(inventoryData)
-      .map((barcode) => database.find((item) => item.barcode === barcode))
-      .filter(Boolean);
-    console.log(matchingItems);
-    setInventory([...matchingItems]);
-    storeData(matchingItems);
-  }, []);
+  // // Map barcode values to corresponding inventory items
+  // useEffect(() => {
+  //   const matchingItems = Object.values(inventoryData)
+  //     .map((barcode) => database.find((item) => item.barcode === barcode))
+  //     .filter(Boolean);
+  //   console.log(matchingItems);
+  //   setInventory([...matchingItems]);
+  //   storeData(matchingItems);
+  // }, []);
   
 
 
@@ -93,6 +85,7 @@ const deleteItem = async (id) => {
     try {
       await AsyncStorage.setItem('inventory', JSON.stringify(newInventory));
       setInventory(newInventory); // Update the state with the new inventory
+      emitter.emit('inventoryUpdated');
     } catch (error) {
       console.error('Failed to save inventory', error);
     }
@@ -132,7 +125,7 @@ const deleteItem = async (id) => {
     const defaultBarcode = 'default_barcode';
 
     const newItem = {
-      id: inventory.length + 1, // Assigning a new ID
+      id: new Date().getTime(), // Assigning a new ID
       imageUri: defaultImageUri,
       itemName: itemName,
       expiryDays: expiryDays ? parseInt(expiryDays, 10) : defaultExpiryDays, // Convert to number

@@ -9,7 +9,34 @@ import { emitter } from './EventEmitter';
 
 const HomeScreen = () => {
 
-  const [inventoryData, setInventoryData] = useState([]);
+  const [inventory, setInventory] = useState([]);
+  // const [inventoryData, setInventoryData] = useState([]);
+
+  const inventoryData = {
+    "0": "345678",
+    "1": "123456",
+    // ... more barcode values
+  };
+
+  const storeData = async (data) => {
+    try {
+      const jsonValue = JSON.stringify(data);
+      await AsyncStorage.setItem('@inventory_key', jsonValue);
+    } catch (e) {
+      // handle save error
+    }
+  }
+
+  // Map barcode values to corresponding inventory items
+  useEffect(() => {
+    const matchingItems = Object.values(inventoryData)
+      .map((barcode) => database.find((item) => item.barcode === barcode))
+      .filter(Boolean);
+    console.log('match',matchingItems);
+    setInventory(matchingItems)
+    console.log('inven', inventory)
+    storeData(matchingItems);
+  }, []);
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -28,6 +55,15 @@ const HomeScreen = () => {
   // const matchingItems = Object.values(inventoryData)
   // .map(barcode => inventory.find(item => item.barcode === barcode))
   // .filter(Boolean);
+
+  const retrieveData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@inventory_key');
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (e) {
+      // handle read error
+    }
+  }
   
 
   useEffect(() => {
@@ -35,13 +71,12 @@ const HomeScreen = () => {
       try {
         const jsonValue = await AsyncStorage.getItem('inventory');
         const inventoryData = jsonValue != null ? JSON.parse(jsonValue) : [];
-        setInventoryData(inventoryData); // Uncomment and use this line if needed
+        setInventory(inventoryData); // Uncomment and use this line if needed
+        console.log('fexthInv',inventoryData)
       } catch (e) {
         console.error('Error fetching data from AsyncStorage:', e);
       }
     };
-  
-    fetchInventory();
 
   // Listener for inventory update events
   const handleInventoryUpdate = () => {
@@ -56,12 +91,20 @@ const HomeScreen = () => {
   };
   }, []);
 
+  useEffect(() => {
+    const loadInventory = async () => {
+      const storedInventory = await retrieveData();
+      console.log('first', storedInventory)
+      if (storedInventory) {
+        setInventory(storedInventory);
+      }
+    };
+    loadInventory();
+  }, []);
+
   // const matchingItems = Object.values(inventoryData)
   // .map(barcode => database.find(item => item.barcode === barcode))
   // .filter(item => item && item.expiryDays <= 2);
-
-  const matchingItems = inventoryData
-  .filter(item => item && item.expiryDays <= 2);
 
   return (
     <View style={styles.container}>
@@ -94,7 +137,8 @@ const HomeScreen = () => {
             <Text style={styles.dataBoxHeaderText}>Items about to expire</Text>
           </View>
           {/* Dynamic Table Content */}
-          {matchingItems.map(item => (
+         {/* Dynamic Table Content */}
+          {inventory.filter(item => item.expiryDays <= 2).map(item => (
             <View key={item.id} style={styles.tableRow}>
               <Image source={{ uri: item.imageUri }} style={styles.image} />
               <View style={styles.details}>
@@ -105,6 +149,7 @@ const HomeScreen = () => {
               </View>
             </View>
           ))}
+
         </View>
         
       </ImageBackground>
