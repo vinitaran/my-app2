@@ -7,15 +7,48 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Inventory from './screens/Inventory';
 import Shopping from './screens/Shopping';
-import registerNNPushToken from 'native-notify';
-
-
+import { useEffect } from 'react';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 
 const Tab = createBottomTabNavigator();
 
 
 export default function App() {
-  registerNNPushToken(17627, '5NbDrHOOSpAwxNc0spzqRF');
+
+  useEffect(() => {
+    schedulePushNotification();
+  }, []);
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+
+  async function schedulePushNotification() {
+    const trigger = new Date();
+    trigger.setHours(13, 22, 0, 0); // Set to 13:06
+    if (trigger < new Date()) {
+      trigger.setDate(trigger.getDate() + 1); // Schedule for the next day if time has passed
+    }
+  
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Daily Inventory Check",
+        body: "Hello! Just a quick reminder to update your inventory. Have a great day!",
+      },
+      trigger: {
+        hour: trigger.getHours(),
+        minute: trigger.getMinutes(),
+        repeats: true,
+      },
+    });
+  }
+  
+
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={{
