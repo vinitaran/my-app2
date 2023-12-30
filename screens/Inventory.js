@@ -130,6 +130,7 @@ const deleteItem = async (id) => {
       itemName: itemName,
       expiryDays: expiryDays ? parseInt(expiryDays, 10) : defaultExpiryDays, // Convert to number
       barcode: defaultBarcode,
+      scanDate: new Date().toISOString(),
       // ... any other default properties
     };
 

@@ -7,13 +7,15 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Inventory from './screens/Inventory';
 import Shopping from './screens/Shopping';
+import registerNNPushToken from 'native-notify';
+
 
 
 const Tab = createBottomTabNavigator();
 
-const Stack = createNativeStackNavigator();
 
 export default function App() {
+  registerNNPushToken(17627, '5NbDrHOOSpAwxNc0spzqRF');
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={{

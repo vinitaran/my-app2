@@ -27,16 +27,32 @@ const HomeScreen = () => {
     }
   }
 
+  const getRemainingExpiryDays = (item) => {
+    const scanDate = new Date(item.scanDate);
+    const currentDate = new Date();
+    const diffTime = Math.abs(currentDate - scanDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    console.log(item, diffDays, diffTime)
+    return Math.max(item.expiryDays - diffDays + 1); // Ensure it doesn't go negative
+  }
+
+
   // Map barcode values to corresponding inventory items
   useEffect(() => {
     const matchingItems = Object.values(inventoryData)
-      .map((barcode) => database.find((item) => item.barcode === barcode))
+      .map((barcode) => {
+        const foundItem = database.find((item) => item.barcode === barcode);
+        if (foundItem) {
+          return { ...foundItem, scanDate: new Date().toISOString() }; // Add scanDate
+        }
+        return null;
+      })
       .filter(Boolean);
-    console.log('match',matchingItems);
-    setInventory(matchingItems)
-    console.log('inven', inventory)
+    console.log('match', matchingItems);
+    setInventory(matchingItems);
     storeData(matchingItems);
   }, []);
+  
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -137,18 +153,18 @@ const HomeScreen = () => {
             <Text style={styles.dataBoxHeaderText}>Items about to expire</Text>
           </View>
           {/* Dynamic Table Content */}
-         {/* Dynamic Table Content */}
-          {inventory.filter(item => item.expiryDays <= 2).map(item => (
-            <View key={item.id} style={styles.tableRow}>
-              <Image source={{ uri: item.imageUri }} style={styles.image} />
-              <View style={styles.details}>
-                <Text style={styles.detailsHeader}>{item.itemName}</Text>
-                <Text style={styles.detailsCaption}>
-                  {`Expires in ${item.expiryDays} day${item.expiryDays !== 1 ? 's' : ''}`}
-                </Text>
-              </View>
-            </View>
-          ))}
+{inventory.filter(item => getRemainingExpiryDays(item) <= 2).map(item => (
+  <View key={item.id} style={styles.tableRow}>
+    <Image source={{ uri: item.imageUri }} style={styles.image} />
+    <View style={styles.details}>
+      <Text style={styles.detailsHeader}>{item.itemName}</Text>
+      <Text style={styles.detailsCaption}>
+        {`Expires in ${getRemainingExpiryDays(item)} day${getRemainingExpiryDays(item) !== 1 ? 's' : ''}`}
+      </Text>
+    </View>
+  </View>
+))}
+
 
         </View>
         
