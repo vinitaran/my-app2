@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar, ImageBackground, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, StatusBar, ImageBackground, StyleSheet, Image, ScrollView, Button, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { database } from '../assets/inventory';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,8 @@ import { emitter } from './EventEmitter';
 const HomeScreen = () => {
 
   const [inventory, setInventory] = useState([]);
+  const [isFanOn, setIsFanOn] = useState(false);
+
   // const [inventoryData, setInventoryData] = useState([]);
 
   const inventoryData = {
@@ -32,7 +34,7 @@ const HomeScreen = () => {
     const currentDate = new Date();
     const diffTime = Math.abs(currentDate - scanDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    console.log(item, diffDays, diffTime)
+    // console.log(item, diffDays, diffTime)
     return Math.max(item.expiryDays - diffDays + 1); // Ensure it doesn't go negative
   }
 
@@ -48,7 +50,7 @@ const HomeScreen = () => {
         return null;
       })
       .filter(Boolean);
-    console.log('match', matchingItems);
+    // console.log('match', matchingItems);
     setInventory(matchingItems);
     storeData(matchingItems);
   }, []);
@@ -88,7 +90,7 @@ const HomeScreen = () => {
         const jsonValue = await AsyncStorage.getItem('inventory');
         const inventoryData = jsonValue != null ? JSON.parse(jsonValue) : [];
         setInventory(inventoryData); // Uncomment and use this line if needed
-        console.log('fexthInv',inventoryData)
+        // console.log('fexthInv',inventoryData)
       } catch (e) {
         console.error('Error fetching data from AsyncStorage:', e);
       }
@@ -110,13 +112,26 @@ const HomeScreen = () => {
   useEffect(() => {
     const loadInventory = async () => {
       const storedInventory = await retrieveData();
-      console.log('first', storedInventory)
+      // console.log('first', storedInventory)
       if (storedInventory) {
         setInventory(storedInventory);
       }
     };
     loadInventory();
   }, []);
+
+  const toggleFan = async () => {
+    const newState = !isFanOn;
+    const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
+    console.log(url);
+    try {
+      await fetch(url);
+      setIsFanOn(newState);
+      // Handle response if necessary
+    } catch (error) {
+      console.error('Error toggling fan:', error);
+    }
+  };
 
   // const matchingItems = Object.values(inventoryData)
   // .map(barcode => database.find(item => item.barcode === barcode))
@@ -133,6 +148,14 @@ const HomeScreen = () => {
         <View style={styles.greetingBox}>
             <Text style={styles.greetings}>Smart Fridge</Text>
             <Text style={styles.greetingsName}>Welcome Vinita!</Text>
+            <TouchableOpacity
+  style={styles.fanButton}
+  onPress={toggleFan}
+>
+  <Text style={styles.fanButtonText}>
+    {isFanOn ? 'Turn Off' : 'Turn On'}
+  </Text>
+</TouchableOpacity>
         </View>
         <View style={styles.dataBox}>
         <View style={styles.dataBoxHeader}>
@@ -257,7 +280,20 @@ const styles = StyleSheet.create({
   },
   dataBoxEmojiContainerText:{
     fontSize: 50,
-  }
+  },
+  fanButton: {
+    backgroundColor: '#007bff', // Blue background
+    padding: 10,
+    borderRadius: 5,
+    margin: 25,
+    alignItems: 'center', // Center text horizontally
+    justifyContent: 'center', // Center text vertically
+  },
+  fanButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default HomeScreen;
