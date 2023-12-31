@@ -148,7 +148,7 @@ const HomeScreen = () => {
         blurRadius={3}
       >
         <View style={styles.greetingBox}>
-            <Text style={styles.greetings}>Smart Fridge</Text>
+            <Text style={styles.greetings}>Smart Fridge v2</Text>
             <Text style={styles.greetingsName}>Welcome Vinita!</Text>
             <TouchableOpacity
   style={styles.fanButton}
