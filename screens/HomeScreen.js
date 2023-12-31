@@ -122,6 +122,7 @@ const HomeScreen = () => {
 
   const toggleFan = async () => {
     const newState = !isFanOn;
+    console.log(isFanOn);
     const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
     console.log(url);
     try {
@@ -141,7 +142,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <ScrollView>
       <ImageBackground
-        source={require('../assets/home.avif')} // Replace with the actual path to your image
+        source={require('../assets/milk.jpg')} // Replace with the actual path to your image
         style={styles.backgroundImage}
         blurRadius={3}
       >
