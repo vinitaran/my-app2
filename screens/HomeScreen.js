@@ -4,6 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { database } from '../assets/inventory';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { emitter } from './EventEmitter';
+import axios from 'axios';
 
   
 
@@ -123,11 +124,11 @@ const HomeScreen = () => {
   const toggleFan = async () => {
     const newState = !isFanOn;
     const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
-    console.log(url);
+  
     try {
-      await fetch(url);
+      const response = await axios.get(url);
       setIsFanOn(newState);
-      // Handle response if necessary
+      // Handle the response if necessary
     } catch (error) {
       console.error('Error toggling fan:', error);
     }
