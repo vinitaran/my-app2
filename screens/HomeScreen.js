@@ -122,13 +122,19 @@ const HomeScreen = () => {
   }, []);
 
   const toggleFan = async () => {
+    console.log("------------------------------");
     const newState = !isFanOn;
-    console.log(isFanOn);
+    console.log(newState);
     const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
-  
+    // const url = `http://randomuser.me/api/`;
+    console.log(url);
+      setIsFanOn(newState);
+
     try {
       const response = await axios.get(url);
-      setIsFanOn(newState);
+      if(response.status === 200) {
+        console.log(response);
+      }
       // Handle the response if necessary
     } catch (error) {
       console.error('Error toggling fan:', error);
