@@ -127,8 +127,8 @@ const HomeScreen = () => {
     console.log("------------------------------");
     const newState = !isFanOn;
     console.log(newState);
-    // const url = `http://192.168.169.1/scan_clear.json`;
-    const url = `http://randomuser.me/api/`;
+    const url = `http://192.168.169.1/scan_clear.json`;
+    // const url = `http://randomuser.me/api/`;
     console.log(url);
     setIsFanOn(newState);
 
