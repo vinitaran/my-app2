@@ -127,14 +127,14 @@ const HomeScreen = () => {
     console.log("------------------------------");
     const newState = !isFanOn;
     console.log(newState);
-    const url = `http://192.168.169.1/scan_clear.json`;
-    // const url = `http://randomuser.me/api/`;
+    // const url = `http://192.168.169.1/scan_clear.json`;
+    const url = `http://randomuser.me/api/`;
     console.log(url);
     setIsFanOn(newState);
 
     const response = await axios.get(url);
     console.log(response);
-    setDisplayErrorMessage(response.status);
+    setDisplayErrorMessage(`---${response.status}`);
     if(response.status === 200) {
       console.log(response);
     }
@@ -153,7 +153,7 @@ const HomeScreen = () => {
         blurRadius={3}
       >
         <View style={styles.greetingBox}>
-            <Text style={styles.greetings}>Smart Fridge v6</Text>
+            <Text style={styles.greetings}>Smart Fridge v7</Text>
             <Text style={styles.greetingsName}>Welcome Vinita!</Text>
             <TouchableOpacity
   style={styles.fanButton}
