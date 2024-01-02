@@ -12,6 +12,8 @@ const HomeScreen = () => {
 
   const [inventory, setInventory] = useState([]);
   const [isFanOn, setIsFanOn] = useState(false);
+  const [displayErrorMessage, setDisplayErrorMessage] = useState('false');
+
 
   // const [inventoryData, setInventoryData] = useState([]);
 
@@ -125,19 +127,16 @@ const HomeScreen = () => {
     console.log("------------------------------");
     const newState = !isFanOn;
     console.log(newState);
-    const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
+    const url = `http://192.168.169.1/set_relay?comp=fan&state=1`;
     // const url = `http://randomuser.me/api/`;
     console.log(url);
-      setIsFanOn(newState);
+    setIsFanOn(newState);
 
-    try {
-      const response = await axios.get(url);
-      if(response.status === 200) {
-        console.log(response);
-      }
-      // Handle the response if necessary
-    } catch (error) {
-      console.error('Error toggling fan:', error);
+    const response = await axios.get(url);
+    console.log(response);
+    setDisplayErrorMessage(response);
+    if(response.status === 200) {
+      console.log(response);
     }
   };
 
@@ -154,7 +153,7 @@ const HomeScreen = () => {
         blurRadius={3}
       >
         <View style={styles.greetingBox}>
-            <Text style={styles.greetings}>Smart Fridge v2</Text>
+            <Text style={styles.greetings}>Smart Fridge v4</Text>
             <Text style={styles.greetingsName}>Welcome Vinita!</Text>
             <TouchableOpacity
   style={styles.fanButton}
@@ -162,6 +161,7 @@ const HomeScreen = () => {
 >
   <Text style={styles.fanButtonText}>
     {isFanOn ? 'Turn Off' : 'Turn On'}
+    {displayErrorMessage}
   </Text>
 </TouchableOpacity>
         </View>
