@@ -4,14 +4,14 @@ export const database = [
       imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
       itemName: 'Capsicum',
       expiryDays: 2,
-      barcode: "123456",
+      barcode: 4031300250884,
     },
     {
         id: 2,
         imageUri: 'https://www.southernliving.com/thmb/zCKBQZG85v0gxUpn5Nm_8elGJaA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1413944242-79c406e0bbe4435596bc671f95a949cb.jpg',
         itemName: 'Milk',
         expiryDays: 1,
-        barcode: "345678",
+        barcode: 4009932007312,
       },
       {
         id: 3,

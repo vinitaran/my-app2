@@ -18,10 +18,9 @@ const HomeScreen = () => {
   // const [inventoryData, setInventoryData] = useState([]);
 
   const inventoryData = {
-    "0": "345678",
-    "1": "123456",
-    // ... more barcode values
-  };
+    "0": 4031300250884,
+    "1": 4009932007312
+}
 
   const storeData = async (data) => {
     try {
@@ -59,19 +58,19 @@ const HomeScreen = () => {
   }, []);
   
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch('http://192.168.169.1/scan_state.json');
-  //       const data = await response.json();
-  //       setInventoryData(data);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://192.168.169.1/scan_state.json');
+        const data = response.data;
+        setInventoryData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
 
   // const matchingItems = Object.values(inventoryData)
   // .map(barcode => inventory.find(item => item.barcode === barcode))
@@ -127,7 +126,7 @@ const HomeScreen = () => {
     console.log("------------------------------");
     const newState = !isFanOn;
     console.log(newState);
-    const url = `http://192.168.169.1/scan_clear.json`;
+    const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
     // const url = `http://randomuser.me/api/`;
     console.log(url);
     setIsFanOn(newState);

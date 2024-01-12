@@ -15,6 +15,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Picker, PickerIOS } from '@react-native-picker/picker';
 import { database } from '../assets/inventory';
 import { emitter } from './EventEmitter';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 
 
@@ -25,9 +26,15 @@ const Inventory = () => {
   const [inventory, setInventory] = useState();
   const [matchedItems, setMatchedItems] = useState();
   const [expiryDays, setExpiryDays] = useState('');
-
-
-
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: 'Dairy', value: 'dairy' },
+    { label: 'Vegetable', value: 'vegetable' },
+    { label: 'Fruit', value: 'fruit' },
+    // ... add other categories as needed
+  ]);
+  
 
 
 const retrieveData = async () => {
@@ -53,7 +60,7 @@ const deleteItem = async (id) => {
 
   // const inventoryData = {
   //   "0": "345678",
-  //   "1": "123456",
+  //   "1": "345677",
   //   // ... more barcode values
   // };
 
@@ -167,17 +174,30 @@ const deleteItem = async (id) => {
 
       {/* Picker for Category */}
       <Text style={styles.inputLabel}>Category</Text>
-      <Picker
-        selectedValue={selectedCategory}
-        onValueChange={handleCategoryChange}
-        style={styles.picker}
-      >
-        <Picker.Item label="Select Category" value={null} />
-        <Picker.Item label="Dairy" value="dairy" />
-        <Picker.Item label="Vegetable" value="vegetable" />
-        <Picker.Item label="Fruit" value="fruit" />
-        {/* Add more categories as needed */}
-      </Picker>
+      <DropDownPicker
+  open={open}
+  value={value}
+  items={items}
+  setOpen={setOpen}
+  setValue={setValue}
+  setItems={setItems}
+  style={{
+    backgroundColor: "#f8f8f8", // Set the background color to gray
+    borderColor: "lightgray", // Optional: set border color
+    color:'gray',
+    ...styles.picker, // Include other styling from your styles
+  }}
+  dropDownContainerStyle={{// Set the dropdown container background color to gray
+    borderColor: "lightgray", // Optional: set border color of the dropdown container
+  }}
+  labelStyle={{
+    color: 'gray', // Change text color
+    // Add any additional text styling here
+  }}
+  // ... other props
+/>
+
+
 
       <Text style={styles.inputLabel}>Expires In (days)</Text>
 <TextInput
@@ -402,6 +422,10 @@ deleteButton: {
 deleteButtonText: {
   color: 'white',
   // ... other styling for the button text ...
+},
+picker:{
+  marginBottom: 10,
+  color: 'gray'
 }
 
 });
