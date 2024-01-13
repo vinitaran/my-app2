@@ -15,12 +15,12 @@ const HomeScreen = () => {
   const [displayErrorMessage, setDisplayErrorMessage] = useState();
 
 
-  // const [inventoryData, setInventoryData] = useState([]);
+  const [inventoryData, setInventoryData] = useState([]);
 
-  const inventoryData = {
-    "0": 4031300250884,
-    "1": 4009932007312
-}
+//   const inventoryData = {
+//     "0": 4031300250884,
+//     "1": 4009932007312
+// }
 
   const storeData = async (data) => {
     try {

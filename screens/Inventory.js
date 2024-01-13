@@ -89,8 +89,10 @@ const deleteItem = async (id) => {
   
 
   const saveInventory = async (newInventory) => {
+    console.log('adding item')
     try {
-      await AsyncStorage.setItem('inventory', JSON.stringify(newInventory));
+      const res = await AsyncStorage.setItem('inventory', JSON.stringify(newInventory));
+      console.log(res)
       setInventory(newInventory); // Update the state with the new inventory
       emitter.emit('inventoryUpdated');
     } catch (error) {
@@ -131,6 +133,7 @@ const deleteItem = async (id) => {
     const defaultExpiryDays = 7;
     const defaultBarcode = 'default_barcode';
 
+
     const newItem = {
       id: new Date().getTime(), // Assigning a new ID
       imageUri: defaultImageUri,
@@ -141,14 +144,13 @@ const deleteItem = async (id) => {
       // ... any other default properties
     };
 
-    if (itemName && selectedCategory) {
-      const newInventory = [...inventory, newItem];
-      saveInventory(newInventory); // Save the updated inventory
-      toggleModal();
-    } else {
-      // Handle the case when itemName or selectedCategory is not provided
-    }
+    const newInventory = [...inventory, newItem];
+
+    saveInventory(newInventory); // Save the updated inventory
+    toggleModal();
   };
+
+  console.log(inventory)
 
   return (
     <View style={styles.container}>
@@ -200,13 +202,13 @@ const deleteItem = async (id) => {
 
 
       <Text style={styles.inputLabel}>Expires In (days)</Text>
-<TextInput
-  style={styles.input}
-  placeholder="Enter number of days"
-  value={expiryDays}
-  onChangeText={handleExpiryDaysChange}
-  keyboardType="numeric" // Ensures only numbers are entered
-/>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter number of days"
+        value={expiryDays}
+        onChangeText={handleExpiryDaysChange}
+        keyboardType="numeric" // Ensures only numbers are entered
+      />
 
 
       {/* Submit Button */}
