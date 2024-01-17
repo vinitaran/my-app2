@@ -13,9 +13,11 @@ const HomeScreen = () => {
   const [inventory, setInventory] = useState([]);
   const [isFanOn, setIsFanOn] = useState(false);
   const [displayErrorMessage, setDisplayErrorMessage] = useState();
+  const [airQuality, setAirQuality] = useState(null);
 
 
-  const [inventoryData, setInventoryData] = useState([]);
+
+  const [inventoryData, setInventoryData] = useState({});
 
 //   const inventoryData = {
 //     "0": 4031300250884,
@@ -55,20 +57,44 @@ const HomeScreen = () => {
     // console.log('match', matchingItems);
     setInventory(matchingItems);
     storeData(matchingItems);
+  }, [inventoryData]);
+
+  const fetchAirQuality = async () => {
+    try {
+      const response = await axios.get('http://192.168.169.1/airquality.json');
+      setAirQuality(response.data.AirQuality);
+    } catch (error) {
+      console.error('Error fetching air quality data:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchAirQuality();
   }, []);
+
+  const getAirQualityStatus = () => {
+    if (airQuality < 5) return 'Good';
+    else if (airQuality === 5) return 'Poor';
+    else if (airQuality > 5) return 'Very Bad';
+    else return 'Loading...';
+  };
+  
+  
+
+
+  const fetchData = async () => {
+    try {
+      console.log('first')
+      const response = await axios.get('http://192.168.169.1/scan_state.json');
+      const data = response.data;
+      setInventoryData(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
   
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://192.168.169.1/scan_state.json');
-        const data = response.data;
-        setInventoryData(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-  
     fetchData();
   }, []);
 
@@ -124,6 +150,12 @@ const HomeScreen = () => {
 
   const toggleFan = async () => {
     console.log("------------------------------");
+  //   setInventoryData({
+  //     "0": 4031300250884,
+  //     "1": 4009932007312,
+  //     "2": 345677
+  // })
+    fetchData();
     const newState = !isFanOn;
     console.log(newState);
     const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
@@ -138,6 +170,8 @@ const HomeScreen = () => {
       console.log(response);
     }
   };
+
+  console.log('------------------',inventoryData)
 
   // const matchingItems = Object.values(inventoryData)
   // .map(barcode => database.find(item => item.barcode === barcode))
@@ -174,7 +208,7 @@ const HomeScreen = () => {
                 <Text>2°C - Optimal and Stable</Text>
               </View>
               <View style={styles.dataBoxEmoji}><Text style={styles.dataBoxEmojiContainerText}>🤢</Text>
-              <Text>Poor</Text>
+              <Text>{getAirQualityStatus()}</Text>
               </View>
             </View>
         </View>

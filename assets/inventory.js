@@ -18,7 +18,7 @@ export const database = [
         imageUri: 'https://www.allrecipes.com/thmb/y_uvjwXWAuD6T0RxaS19jFvZyFU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1205638014-2000-d0fbf9170f2d43eeb046f56eec65319c.jpg',
         itemName: 'Oranges',
         expiryDays: 4,
-        barcode: "345677",
+        barcode: 345677,
       },
       
       
