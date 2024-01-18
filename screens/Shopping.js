@@ -1,81 +1,46 @@
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const data = [
-    {
-      id: 1,
-      imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
-      itemName: 'Capsicum',
-      expiryDays: 2,
-    },
-    {
-        id: 2,
-        imageUri: 'https://www.southernliving.com/thmb/zCKBQZG85v0gxUpn5Nm_8elGJaA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1413944242-79c406e0bbe4435596bc671f95a949cb.jpg',
-        itemName: 'Milk',
-        expiryDays: 1,
-    },
-    {
-    id: 3,
-    imageUri: 'https://www.allrecipes.com/thmb/y_uvjwXWAuD6T0RxaS19jFvZyFU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1205638014-2000-d0fbf9170f2d43eeb046f56eec65319c.jpg',
-    itemName: 'Oranges',
-    expiryDays: 4,
-    },
-    {
-        id: 4,
-        imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
-        itemName: 'Capsicum',
-        expiryDays: 2,
-      },
-      {
-          id: 5,
-          imageUri: 'https://www.southernliving.com/thmb/zCKBQZG85v0gxUpn5Nm_8elGJaA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1413944242-79c406e0bbe4435596bc671f95a949cb.jpg',
-          itemName: 'Milk',
-          expiryDays: 1,
-      },
-      {
-      id: 6,
-      imageUri: 'https://www.allrecipes.com/thmb/y_uvjwXWAuD6T0RxaS19jFvZyFU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1205638014-2000-d0fbf9170f2d43eeb046f56eec65319c.jpg',
-      itemName: 'Oranges',
-      expiryDays: 4,
-      },
+const Shopping = () => {
+  const [shoppingList, setShoppingList] = useState([]);
 
-      {
-        id: 7,
-        imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
-        itemName: 'Capsicum',
-        expiryDays: 2,
-      },
-      {
-          id: 8,
-          imageUri: 'https://www.southernliving.com/thmb/zCKBQZG85v0gxUpn5Nm_8elGJaA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1413944242-79c406e0bbe4435596bc671f95a949cb.jpg',
-          itemName: 'Milk',
-          expiryDays: 1,
-      },
-      
-      
-    // Add more data objects as needed
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('@inventory');
+        const data = jsonValue != null ? JSON.parse(jsonValue) : [];
+        // Filter to show only items with expiryDays equal to 0
+        const filteredData = data.filter(item => item.expiryDays > 0);
+        setShoppingList(filteredData);
+      } catch (e) {
+        console.error('Error fetching data from AsyncStorage:', e);
+      }
+    };
 
-  const Shopping = () => {
-    return (
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        {data.map((shoppingList, index) => (
-          <View key={index} style={styles.dataBox}>
-            <View style={styles.dataBoxHeader}>
-              <Text style={styles.dataBoxHeaderText}>List {index + 1}</Text>
-            </View>
-            {/* Dynamic Table Content */}
-            {data.map((item, itemIndex) => (
-              <View key={itemIndex} style={styles.tableRow}>
-                <View style={styles.details}>
-                  <Text style={styles.detailsHeader}>{itemIndex + 1}. {item.itemName}</Text>
-                </View>
-              </View>
-            ))}
+    fetchData();
+  }, []);
+
+  return (
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      {shoppingList.map((item, index) => (
+        <View key={index} style={styles.dataBox}>
+          <View style={styles.dataBoxHeader}>
+            <Text style={styles.dataBoxHeaderText}>Item {index + 1}</Text>
           </View>
-        ))}
-      </ScrollView>
-    );
-  };
+          <View style={styles.tableRow}>
+            <View style={styles.details}>
+              <Text style={styles.detailsHeader}>{item.itemName}</Text>
+            </View>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
+
+// ... existing styles ...
+
   
   const styles = StyleSheet.create({
     scrollViewContent: {

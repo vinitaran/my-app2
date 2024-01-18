@@ -67,13 +67,13 @@ export default function App() {
             <MaterialCommunityIcons name="receipt" color={color} size={size} />
           ),
         }} />
-       <Tab.Screen name="Shopping list" options={{
+       {/* <Tab.Screen name="Shopping list" options={{
           tabBarLabel: 'Shopping list',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="shopping" color={color} size={size} />
           ),
           tabBarBadge: 3,
-        }} component={Shopping} />
+        }} component={Shopping} /> */}
     </Tab.Navigator>
     </NavigationContainer>
   );

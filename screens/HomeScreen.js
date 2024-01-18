@@ -13,7 +13,7 @@ const HomeScreen = () => {
   const [inventory, setInventory] = useState([]);
   const [isFanOn, setIsFanOn] = useState(false);
   const [displayErrorMessage, setDisplayErrorMessage] = useState();
-  const [airQuality, setAirQuality] = useState(null);
+  const [airQuality, setAirQuality] = useState(6);
 
 
 
@@ -72,11 +72,24 @@ const HomeScreen = () => {
     fetchAirQuality();
   }, []);
 
-  const getAirQualityStatus = () => {
-    if (airQuality < 5) return 'Good';
-    else if (airQuality === 5) return 'Poor';
-    else if (airQuality > 5) return 'Very Bad';
-    else return 'Loading...';
+  const getInsideFridgeAirQuality = () => {
+    let message = '';
+    let emoji = '😊'; // Default emoji for good air quality
+  
+    if (airQuality < 5) {
+      message = 'The air inside the fridge is in good condition.';
+    } else if (airQuality === 5) {
+      message = 'The air inside the fridge is of poor quality. Consider checking and ventilating.';
+      emoji = '😷';
+    } else if (airQuality > 5) {
+      message = 'The air inside the fridge is in very bad condition. Immediate action may be needed.';
+      emoji = '🤢';
+    } else {
+      message = 'Loading air quality data...';
+      emoji = '🔄';
+    }
+  
+    return { emoji, message };
   };
   
   
@@ -153,9 +166,10 @@ const HomeScreen = () => {
   //   setInventoryData({
   //     "0": 4031300250884,
   //     "1": 4009932007312,
-  //     "2": 345677
+  //     "2": 345677,
+  //     "3": 4009932007312,
   // })
-    fetchData();
+    // fetchData();
     const newState = !isFanOn;
     console.log(newState);
     const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
@@ -169,6 +183,14 @@ const HomeScreen = () => {
     if(response.status === 200) {
       console.log(response);
     }
+  };
+
+  const refreshData = async () => {
+    // Fetch air quality data
+    await fetchAirQuality();
+
+    // Fetch inventory data
+    await fetchData();
   };
 
   console.log('------------------',inventoryData)
@@ -186,8 +208,17 @@ const HomeScreen = () => {
         blurRadius={3}
       >
         <View style={styles.greetingBox}>
+        <View style={styles.headerContainer}>
             <Text style={styles.greetings}>Smart Fridge v8</Text>
-            <Text style={styles.greetingsName}>Welcome Vinita!</Text>
+            <TouchableOpacity
+              style={styles.refreshButton}
+              onPress={refreshData}
+            >
+              <Text style={styles.refreshButtonText}>Refresh</Text>
+            </TouchableOpacity>
+          </View>
+            
+            <Text style={styles.greetingsName}>Welcome John!</Text>
             <TouchableOpacity
   style={styles.fanButton}
   onPress={toggleFan}
@@ -199,38 +230,50 @@ const HomeScreen = () => {
 </TouchableOpacity>
         </View>
         <View style={styles.dataBox}>
-        <View style={styles.dataBoxHeader}>
-            <Text style={styles.dataBoxHeaderText}>Inside fridge</Text>
-          </View>
-            <View style={styles.dataBoxEmojiContainer}>
-              <View style={styles.dataBoxEmoji}>
-                <Text style={styles.dataBoxEmojiContainerText}><MaterialCommunityIcons name="thermometer" size={56} color="lightblue"/></Text>
-                <Text>2°C - Optimal and Stable</Text>
-              </View>
-              <View style={styles.dataBoxEmoji}><Text style={styles.dataBoxEmojiContainerText}>🤢</Text>
-              <Text>{getAirQualityStatus()}</Text>
-              </View>
+            <View style={styles.dataBoxHeader}>
+              <Text style={styles.dataBoxHeaderText}>Inside fridge</Text>
             </View>
-        </View>
-        <View style={styles.dataBox}>
-          <View style={styles.dataBoxHeader}>
-            <Text style={styles.dataBoxHeaderText}>Items about to expire</Text>
-          </View>
-          {/* Dynamic Table Content */}
-{inventory.filter(item => getRemainingExpiryDays(item) <= 2).map(item => (
-  <View key={item.id} style={styles.tableRow}>
-    <Image source={{ uri: item.imageUri }} style={styles.image} />
-    <View style={styles.details}>
-      <Text style={styles.detailsHeader}>{item.itemName}</Text>
-      <Text style={styles.detailsCaption}>
-        {`Expires in ${getRemainingExpiryDays(item)} day${getRemainingExpiryDays(item) !== 1 ? 's' : ''}`}
-      </Text>
-    </View>
+            <View style={styles.dataBoxEmojiContainer}>
+  <View style={styles.dataBoxEmoji}>
+    <Text style={styles.dataBoxEmojiContainerText}>
+      {getInsideFridgeAirQuality().emoji}
+    </Text>
+    <Text style={styles.airQualityValue}>{`${airQuality}`}</Text>
   </View>
-))}
+  <View style={styles.airQualityMessage}>
+    <Text style={styles.airQualityMessageText}>
+    {getInsideFridgeAirQuality().message} The current air quality index is {airQuality}.
+    </Text>
+  </View>
+</View>
 
-
+          </View>
+          <View style={styles.dataBox}>
+  <View style={styles.dataBoxHeader}>
+    <Text style={styles.dataBoxHeaderText}>Items about to expire</Text>
+  </View>
+  {/* Check if there are items to display */}
+  {inventory.length === 0 ? (
+    <View style={styles.noItemsContainer}>
+      <Text style={styles.airQualityMessageText}>No items are about to expire. Keep your fridge stocked!</Text>
+    </View>
+  ) : (
+    // Dynamic Table Content
+    inventory.filter(item => getRemainingExpiryDays(item) <= 2).map(item => (
+      <View key={item.id} style={styles.tableRow}>
+        <Image source={{ uri: item.imageUri }} style={styles.image} />
+        <View style={styles.details}>
+          <Text style={styles.detailsHeader}>{item.itemName}</Text>
+          <Text style={styles.detailsCaption}>
+            {`Expires in ${getRemainingExpiryDays(item)} day${getRemainingExpiryDays(item) !== 1 ? 's' : ''}`}
+          </Text>
         </View>
+      </View>
+    ))
+  )}
+</View>
+
+
         
       </ImageBackground>
       </ScrollView>
@@ -253,11 +296,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     padding: 10,
-    flex: 1,
   },
   greetingBox: {
     padding: 10,
-    height: 300,
   },
   greetings: {
     fontSize: 25,
@@ -312,21 +353,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  dataBoxEmojiContainer:{
-    flex: 1,
-    justifyContent: 'space-around',
-    flexDirection: 'row',
-    height: 80,
-    padding: 10,
-  },
-  dataBoxEmojiContainerText:{
-    fontSize: 50,
-  },
   fanButton: {
     backgroundColor: '#007bff', // Blue background
     padding: 10,
     borderRadius: 5,
-    margin: 25,
+    marginTop: 25,
     alignItems: 'center', // Center text horizontally
     justifyContent: 'center', // Center text vertically
   },
@@ -335,6 +366,57 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  refreshButton: {
+    backgroundColor: '#28a745', // Green background
+    padding: 8,
+    borderRadius: 5,
+    marginLeft: 10,
+    marginTop: 60,
+    alignItems: 'center', // Center text horizontally
+    justifyContent: 'center', // Center text vertically
+  },
+  refreshButtonText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+
+
+  dataBoxEmojiContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  dataBoxEmoji: {
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  airQualityValue: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#007bff', // Blue color for air quality value
+  },
+  dataBoxEmojiContainerText: {
+    fontSize: 30,
+  },
+  airQualityMessage: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  airQualityMessageText: {
+    fontSize: 18,
+    color: '#555', // Dark gray color for air quality message
+  },
+  
+
+  
 });
 
 export default HomeScreen;
