@@ -1,25 +1,37 @@
+import yogurt from '../assets/yogurt.jpeg'
+import juice from '../assets/juice.webp'; // Replace with the actual file name and extension
+import cream from '../assets/cream.jpeg'; // Replace with the actual file name and extension
+import chocolate from '../assets/chocolate.jpeg'; 
+
 export const database = [
-    {
-      id: 1,
-      imageUri: 'https://sunrisefruits.com/wp-content/uploads/2018/05/Productos-Pimientos-Peppers-Sunrisefruitscompany.jpg',
-      itemName: 'Capsicum',
-      expiryDays: 2,
-      barcode: 4031300250884,
-    },
-    {
-        id: 2,
-        imageUri: 'https://www.southernliving.com/thmb/zCKBQZG85v0gxUpn5Nm_8elGJaA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1413944242-79c406e0bbe4435596bc671f95a949cb.jpg',
-        itemName: 'Milk',
-        expiryDays: 1,
-        barcode: 4009932007312,
-      },
-      {
-        id: 3,
-        imageUri: 'https://www.allrecipes.com/thmb/y_uvjwXWAuD6T0RxaS19jFvZyFU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1205638014-2000-d0fbf9170f2d43eeb046f56eec65319c.jpg',
-        itemName: 'Oranges',
-        expiryDays: 4,
-        barcode: 345677,
-      },
+  {
+    id: 1,
+    imageUri: juice, // Replace with the actual image URL
+    itemName: 'Orange Juice',
+    expiryDays: /* Set the appropriate expiry days */ 3,
+    barcode: 4056489126751,
+  },
+  {
+    id: 2,
+    imageUri: cream, // Replace with the actual image URL
+    itemName: 'Fresh Cream',
+    expiryDays: /* Set the appropriate expiry days */ 5,
+    barcode: 4056489115021,
+  },
+  {
+    id: 3,
+    imageUri: yogurt, // Replace with the actual image URL
+    itemName: 'Yogurt',
+    expiryDays: 7,
+    barcode: 4056489028987,
+  },
+  {
+    id: 4,
+    imageUri: chocolate, // Replace with the actual image URL
+    itemName: 'Chocolate',
+    expiryDays: /* Set the appropriate expiry days */ 10,
+    barcode: 4000417622211,
+  },
       
       
     // Add more data objects as needed

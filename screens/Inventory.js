@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import unknown from '../assets/unknown.jpeg'
 
 import {
   View,
@@ -129,7 +130,7 @@ const deleteItem = async (id) => {
   // clearAsyncStorage();
 
   const handleSubmit = () => {
-    const defaultImageUri = 'https://assets1.risnews.com/styles/max_width_800/s3/2023-05/grocery_1978733351_0.jpg?itok=90BvtBAo';
+    const defaultImageUri = unknown;
     const defaultExpiryDays = 7;
     const defaultBarcode = 'default_barcode';
 
@@ -242,7 +243,7 @@ const deleteItem = async (id) => {
         </View>
         {items?.map((item) => (
           <View key={item.id} style={styles.tableRow}>
-            <Image source={{ uri: item.imageUri }} style={styles.image} />
+            <Image source={item.imageUri}  style={styles.image} />
             <View style={styles.details}>
               <Text style={styles.detailsHeader}>{item.itemName}</Text>
               <Text style={styles.detailsCaption}>

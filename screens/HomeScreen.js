@@ -13,7 +13,7 @@ const HomeScreen = () => {
   const [inventory, setInventory] = useState([]);
   const [isFanOn, setIsFanOn] = useState(false);
   const [displayErrorMessage, setDisplayErrorMessage] = useState();
-  const [airQuality, setAirQuality] = useState(6);
+  const [airQuality, setAirQuality] = useState(1);
 
 
 
@@ -164,12 +164,12 @@ const HomeScreen = () => {
   const toggleFan = async () => {
     console.log("------------------------------");
   //   setInventoryData({
-  //     "0": 4031300250884,
-  //     "1": 4009932007312,
-  //     "2": 345677,
-  //     "3": 4009932007312,
+  //     "0": 4056489028987,
+  //     "1": 4000417622211,
+  //     "2": 4056489126751,
+  //     "3": 4056489115021,
   // })
-    // fetchData();
+  //   fetchData();
     const newState = !isFanOn;
     console.log(newState);
     const url = `http://192.168.169.1/set_relay?comp=fan&state=${newState ? '1' : '0'}`;
@@ -203,7 +203,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <ScrollView>
       <ImageBackground
-        source={require('../assets/milk.jpg')} // Replace with the actual path to your image
+        source={require('../assets/home.avif')} // Replace with the actual path to your image
         style={styles.backgroundImage}
         blurRadius={3}
       >
@@ -259,9 +259,9 @@ const HomeScreen = () => {
     </View>
   ) : (
     // Dynamic Table Content
-    inventory.filter(item => getRemainingExpiryDays(item) <= 2).map(item => (
+    inventory.filter(item => getRemainingExpiryDays(item) <= 5).map(item => (
       <View key={item.id} style={styles.tableRow}>
-        <Image source={{ uri: item.imageUri }} style={styles.image} />
+        <Image source={item.imageUri}  style={styles.image} />
         <View style={styles.details}>
           <Text style={styles.detailsHeader}>{item.itemName}</Text>
           <Text style={styles.detailsCaption}>
@@ -370,7 +370,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 10,
   },
   refreshButton: {
     backgroundColor: '#28a745', // Green background
