@@ -281,15 +281,15 @@ useEffect(() => {
       } 
       return null; // Exclude items that don't meet the condition
     })
-  ) : inventory && inventory.length === 0 ? (
-    // Display message when inventory is empty
-    <View style={styles.noItemsContainer}>
-      <Text style={styles.airQualityMessageText}>No items are about to expire. Keep your fridge stocked!</Text>
-    </View>
   ) : (
-    // Display message when all items have expiry days more than 5
+    // Display message when inventory is empty or all items have expiry days more than 5
     <View style={styles.noItemsContainer}>
-      <Text style={styles.airQualityMessageText}>All items have expiry days more than 5.</Text>
+      <Text style={styles.airQualityMessageText}>
+        {inventory && inventory.length === 0 ? 
+          "No items are about to expire. Keep your fridge stocked!" :
+          "All items have expiry days more than 5."
+        }
+      </Text>
     </View>
   )}
 </View>
