@@ -170,16 +170,7 @@ useEffect(() => {
 
   const toggleFan = async () => {
     console.log("------------------------------");
-      setInventoryData({
-      "0": 4056489028987,
-      "1": 4000417622211,
-      "2": 4056489126751,
-      "3": 4056489115021,
-      
-      "4": 4000417622211,
-      "5": 4056489126751,
-      "6": 4056489115021,
-  })
+
   //   fetchData();
     const newState = !isFanOn;
     console.log(newState);
