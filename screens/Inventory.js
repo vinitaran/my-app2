@@ -158,7 +158,7 @@ const deleteItem = async (id) => {
     toggleModal();
   };
 
-  console.log(inventory)
+  console.log('inventory page',inventory)
 
   return (
     <View style={styles.container}>

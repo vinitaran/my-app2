@@ -170,16 +170,16 @@ useEffect(() => {
 
   const toggleFan = async () => {
     console.log("------------------------------");
-  //     setInventoryData({
-  //     "0": 4056489028987,
-  //     "1": 4000417622211,
-  //     "2": 4056489126751,
-  //     "3": 4056489115021,
+      setInventoryData({
+      "0": 4056489028987,
+      "1": 4000417622211,
+      "2": 4056489126751,
+      "3": 4056489115021,
       
-  //     "4": 4000417622211,
-  //     "5": 4056489126751,
-  //     "6": 4056489115021,
-  // })
+      "4": 4000417622211,
+      "5": 4056489126751,
+      "6": 4056489115021,
+  })
   //   fetchData();
     const newState = !isFanOn;
     console.log(newState);
@@ -202,7 +202,8 @@ useEffect(() => {
     await fetchData();
   };
 
-  console.log('------------------',inventoryData)
+  console.log('Inventory:', inventory);
+
 
   // const matchingItems = Object.values(inventoryData)
   // .map(barcode => database.find(item => item.barcode === barcode))
@@ -257,28 +258,59 @@ useEffect(() => {
 
           </View>
           <View style={styles.dataBox}>
-  <View style={styles.dataBoxHeader}>
-    <Text style={styles.dataBoxHeaderText}>Items about to expire</Text>
-  </View>
-  {/* Check if there are items to display */}
-  {inventory.length === 0 ? (
+          <View style={styles.dataBoxHeader}>
+  <Text style={styles.dataBoxHeaderText}>Items about to expire</Text>
+</View>
+
+<View>
+  {inventory && inventory.length > 0 ? (
+    // Display items with expiry date below 6 days
+    inventory?.map((item) => {
+      if(item.expiryDays < 6){
+        return(
+          <View key={item.id} style={styles.tableRow}>
+                <Image source={item.imageUri}  style={styles.image} />
+                <View style={styles.details}>
+                  <Text style={styles.detailsHeader}>{item.itemName}</Text>
+                  <Text style={styles.detailsCaption}>
+                    {`Expires in ${item.expiryDays} day${item.expiryDays !== 1 ? 's' : ''}`}
+                  </Text>
+                </View>
+              </View>
+        )
+      } 
+      return null; // Exclude items that don't meet the condition
+    })
+  ) : inventory && inventory.length === 0 ? (
+    // Display message when inventory is empty
     <View style={styles.noItemsContainer}>
       <Text style={styles.airQualityMessageText}>No items are about to expire. Keep your fridge stocked!</Text>
     </View>
   ) : (
-    // Dynamic Table Content
-    inventory.filter(item => getRemainingExpiryDays(item) <= 5).map(item => (
-      <View key={item.id} style={styles.tableRow}>
-        <Image source={item.imageUri}  style={styles.image} />
-        <View style={styles.details}>
-          <Text style={styles.detailsHeader}>{item.itemName}</Text>
-          <Text style={styles.detailsCaption}>
-            {`Expires in ${getRemainingExpiryDays(item)} day${getRemainingExpiryDays(item) !== 1 ? 's' : ''}`}
-          </Text>
-        </View>
-      </View>
-    ))
+    // Display message when all items have expiry days more than 5
+    <View style={styles.noItemsContainer}>
+      <Text style={styles.airQualityMessageText}>All items have expiry days more than 5.</Text>
+    </View>
   )}
+</View>
+
+
+{/* {inventory?.map((item) => {
+  if(item.expiryDays < 6){
+    return(
+      <View key={item.id} style={styles.tableRow}>
+            <Image source={item.imageUri}  style={styles.image} />
+            <View style={styles.details}>
+              <Text style={styles.detailsHeader}>{item.itemName}</Text>
+              <Text style={styles.detailsCaption}>
+                {`Expires in ${item.expiryDays} day${item.expiryDays !== 1 ? 's' : ''}`}
+              </Text>
+            </View>
+          </View>
+    )
+  } 
+})} */}
+
 </View>
 
 
