@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar, ImageBackground, StyleSheet, Image, ScrollView, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StatusBar, ImageBackground, StyleSheet, Image, ScrollView, Button, TouchableOpacity, Dimensions } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { database } from '../assets/inventory';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { emitter } from './EventEmitter';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
+const { height } = Dimensions.get('window');
   
 
 const HomeScreen = () => {
@@ -44,20 +46,25 @@ const HomeScreen = () => {
 
 
   // Map barcode values to corresponding inventory items
-  useEffect(() => {
-    const matchingItems = Object.values(inventoryData)
-      .map((barcode) => {
-        const foundItem = database.find((item) => item.barcode === barcode);
-        if (foundItem) {
-          return { ...foundItem, scanDate: new Date().toISOString() }; // Add scanDate
-        }
-        return null;
-      })
-      .filter(Boolean);
-    // console.log('match', matchingItems);
-    setInventory(matchingItems);
-    storeData(matchingItems);
-  }, [inventoryData]);
+// Map barcode values to corresponding inventory items
+useEffect(() => {
+  const matchingItems = Object.values(inventoryData)
+    .map((barcode) => {
+      const foundItem = database.find((item) => item.barcode === barcode);
+      if (foundItem) {
+        const uniqueId = uuidv4();
+        return { ...foundItem, id: uniqueId };
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  setInventory(matchingItems);
+  storeData(matchingItems);
+  console.log("//////////////////", matchingItems);
+}, [inventoryData]);
+
+
 
   const fetchAirQuality = async () => {
     try {
@@ -163,11 +170,15 @@ const HomeScreen = () => {
 
   const toggleFan = async () => {
     console.log("------------------------------");
-  //   setInventoryData({
+  //     setInventoryData({
   //     "0": 4056489028987,
   //     "1": 4000417622211,
   //     "2": 4056489126751,
   //     "3": 4056489115021,
+      
+  //     "4": 4000417622211,
+  //     "5": 4056489126751,
+  //     "6": 4056489115021,
   // })
   //   fetchData();
     const newState = !isFanOn;
@@ -178,8 +189,6 @@ const HomeScreen = () => {
     setIsFanOn(newState);
 
     const response = await axios.get(url);
-    console.log(response);
-    setDisplayErrorMessage(`---${response.status}`);
     if(response.status === 200) {
       console.log(response);
     }
@@ -201,15 +210,15 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView style={styles.scrollView}>
       <ImageBackground
-        source={require('../assets/home.avif')} // Replace with the actual path to your image
+        source={require('../assets/orange.jpg')} // Replace with the actual path to your image
         style={styles.backgroundImage}
         blurRadius={3}
       >
         <View style={styles.greetingBox}>
         <View style={styles.headerContainer}>
-            <Text style={styles.greetings}>Smart Fridge v8</Text>
+            <Text style={styles.greetings}>Smart Fridge</Text>
             <TouchableOpacity
               style={styles.refreshButton}
               onPress={refreshData}
@@ -225,7 +234,6 @@ const HomeScreen = () => {
 >
   <Text style={styles.fanButtonText}>
     {isFanOn ? 'Turn Off' : 'Turn On'}
-    {displayErrorMessage}
   </Text>
 </TouchableOpacity>
         </View>
@@ -288,8 +296,8 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover', // or 'stretch' or 'contain'
-    minHeight: "100%",
+    resizeMode: 'cover',
+    minHeight: height,
   },
   dataBox: {
     margin: 10,

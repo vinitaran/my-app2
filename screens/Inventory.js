@@ -48,12 +48,19 @@ const retrieveData = async () => {
 }
 
 const deleteItem = async (id) => {
+  console.log('Deleting item with ID:', id);
+
   const updatedInventory = inventory.filter(item => item.id !== id);
+  console.log('Updated Inventory:', updatedInventory);
+
   setInventory(updatedInventory);
   await AsyncStorage.setItem('inventory', JSON.stringify(updatedInventory));
+  console.log('AsyncStorage Updated');
+
   // After deleting an item and updating AsyncStorage
   emitter.emit('inventoryUpdated');
 };
+
 
 
 
